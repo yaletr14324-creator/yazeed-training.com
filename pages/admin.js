@@ -11,15 +11,15 @@ export default function Admin() {
       setRows(json.data);
       setErr('');
     } else {
-      const j = await res.json().catch(()=>({error:'خطأ'}));
+      const j = await res.json().catch(()=>({error:'حصل خطأ'}));
       setErr(j.error || 'خطأ في المصادقة');
     }
   }
   return (
     <main style={{maxWidth:900, margin:'2rem auto', fontFamily:'sans-serif'}}>
-      <h1>لوحة النتائج (Admin)</h1>
+      <h1>لوحة النتائج (المسؤول)</h1>
       <div style={{marginBottom:12}}>
-        <input type="password" placeholder="كلمة مرور المسؤول" value={pw} onChange={e=>setPw(e.target.value)} />
+        <input type="password" placeholder="أدخل كلمة مرور المسؤول" value={pw} onChange={e=>setPw(e.target.value)} />
         <button onClick={load}>عرض الردود</button>
       </div>
       {err && <p>{err}</p>}
@@ -28,7 +28,7 @@ export default function Admin() {
           <thead><tr><th>الوقت</th><th>الاسم</th><th>البريد</th><th>العمر</th><th>الخيار</th><th>الرسالة</th></tr></thead>
           <tbody>{rows.map(r=>(
             <tr key={r.id}>
-              <td>{new Date(r.created_at).toLocaleString()}</td>
+              <td>{new Date(r.created_at).toLocaleString('ar-EG')}</td>
               <td>{r.name}</td><td>{r.email}</td><td>{r.age}</td><td>{r.option}</td><td>{r.message}</td>
             </tr>
           ))}</tbody>
