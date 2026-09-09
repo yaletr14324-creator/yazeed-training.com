@@ -1,37 +1,266 @@
-import { useState } from 'react';
-export default function Home() {
-  const [status, setStatus] = useState('');
-  async function handleSubmit(e) {
+import
+ { useState } 
+from
+ 
+'react'
+;
+export
+ 
+default
+ 
+function
+ 
+Home
+(
+) 
+{
+  
+const
+ [status, setStatus] = useState(
+''
+);
+  
+const
+ [isSubmitting, setIsSubmitting] = useState(
+false
+);
+  
+async
+ 
+function
+ 
+handleSubmit
+(
+e
+) 
+{
     e.preventDefault();
-    setStatus('جاري الإرسال...');
-    const form = new FormData(e.target);
-    const body = Object.fromEntries(form);
-    const res = await fetch('/api/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    if (res.ok) { setStatus('تم الإرسال ✅'); e.target.reset(); } else {
-      const j = await res.json().catch(()=>({ error: 'حدث خطأ' }));
-      setStatus(j.error || 'حدث خطأ يرجى المحاولة لاحقاً');
+    setIsSubmitting(
+true
+);
+    setStatus(
+'جاري الإرسال...'
+);
+    
+const
+ form = 
+new
+ FormData(e.currentTarget);
+    
+const
+ body = 
+Object
+.fromEntries(form);
+    
+try
+ {
+      
+const
+ res = 
+await
+ fetch(
+'/api/submit'
+, {
+        
+method
+: 
+'POST'
+,
+        
+headers
+: {
+          
+'Content-Type'
+: 
+'application/json'
+,
+        },
+        
+body
+: 
+JSON
+.stringify(body),
+      });
+      
+if
+ (res.ok) {
+        setStatus(
+'تم إرسال النموذج بنجاح ✅'
+);
+        e.currentTarget.reset();
+      } 
+else
+ {
+        
+const
+ data = 
+await
+ res.json().catch(
+() =>
+ ({}));
+        setStatus(data.error || 
+'حدث خطأ، يرجى المحاولة لاحقًا'
+);
+      }
+    } 
+catch
+ {
+      setStatus(
+'تعذر الاتصال بالخادم، يرجى المحاولة لاحقًا'
+);
+    } 
+finally
+ {
+      setIsSubmitting(
+false
+);
     }
   }
-  return (
-    <main style={{maxWidth:600, margin:'2rem auto', fontFamily:'sans-serif'}}>
+  
+const
+ inputStyle = {
+    
+width
+: 
+'100%'
+,
+    
+padding
+: 
+'12px'
+,
+    
+marginTop
+: 
+'6px'
+,
+    
+marginBottom
+: 
+'16px'
+,
+    
+border
+: 
+'1px solid #d1d5db'
+,
+    
+borderRadius
+: 
+'8px'
+,
+    
+fontSize
+: 
+'16px'
+,
+    
+boxSizing
+: 
+'border-box'
+,
+    
+direction
+: 
+'rtl'
+,
+  };
+  
+return
+ (
+    <main
+      dir="rtl"
+      lang="ar"
+      style={{
+        maxWidth: '600px',
+        margin: '2rem auto',
+        padding: '24px',
+        fontFamily: 'Tahoma, Arial, sans-serif',
+        direction: 'rtl',
+      }}
+    >
       <h1>استمارة المشاركة</h1>
       <form onSubmit={handleSubmit}>
-        <input name="name" placeholder="الاسم" required style={{width:'100%',marginBottom:8}}/>
-        <input name="email" type="email" placeholder="البريد الإلكتروني" required style={{width:'100%',marginBottom:8}}/>
-        <input name="age" type="number" placeholder="العمر (اختياري)" style={{width:'100%',marginBottom:8}}/>
-        <select name="option" required style={{width:'100%',marginBottom:8}}>
-          <option value="">اختر خياراً</option>
-          <option value="option1">الخيار 1</option>
-          <option value="option2">الخيار 2</option>
+        <label htmlFor="name">الاسم</label>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          placeholder="أدخل الاسم"
+          required
+          style={inputStyle}
+        />
+        <label htmlFor="email">البريد الإلكتروني</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          placeholder="أدخل البريد الإلكتروني"
+          required
+          style={inputStyle}
+        />
+        <label htmlFor="age">العمر</label>
+        <input
+          id="age"
+          name="age"
+          type="number"
+          placeholder="العمر - اختياري"
+          min="1"
+          style={inputStyle}
+        />
+        <label htmlFor="option">الخيار</label>
+        <select
+          id="option"
+          name="option"
+          required
+          defaultValue=""
+          style={inputStyle}
+        >
+          <option value="" disabled>
+            اختر خيارًا
+          </option>
+          <option value="option1">الخيار الأول</option>
+          <option value="option2">الخيار الثاني</option>
         </select>
-        <textarea name="message" placeholder="نص الرسالة" rows="5" style={{width:'100%',marginBottom:8}}/>
-        <button type="submit">إرسال</button>
+        <label htmlFor="message">الرسالة</label>
+        <textarea
+          id="message"
+          name="message"
+          placeholder="اكتب رسالتك هنا"
+          rows="5"
+          style={{
+            ...inputStyle,
+            resize: 'vertical',
+          }}
+        />
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          style={{
+            width: '100%',
+            padding: '12px',
+            border: 'none',
+            borderRadius: '8px',
+            backgroundColor: isSubmitting ? '#9ca3af' : '#2563eb',
+            color: '#fff',
+            fontSize: '16px',
+            cursor: isSubmitting ? 'not-allowed' : 'pointer',
+          }}
+        >
+          {isSubmitting ? 'جاري الإرسال...' : 'إرسال النموذج'}
+        </button>
       </form>
-      <p>{status}</p>
+      {status && (
+        <p
+          role="status"
+          style={{
+            marginTop: '16px',
+            textAlign: 'center',
+          }}
+        >
+          {status}
+        </p>
+      )}
     </main>
   );
 }
